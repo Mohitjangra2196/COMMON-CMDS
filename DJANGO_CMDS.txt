@@ -1,0 +1,22 @@
+myprojectenv\Scripts\activate
+cd myproject
+py manage.py runserver
+
+
+to create new venv
+python -m venv myenv
+myenv\Scripts\activate.bat
+pip install Django
+install others which need
+
+for 12c connect
+pip install Django==3.2.25 
+pip install cx_Oracle==8.3.0
+
+
+
+for git
+
+git add .
+git commit -m "SECURITY OUT IN "
+git push
