@@ -1,0 +1,18 @@
+## Django Folder Structure: Quick Notes
+
+* **`manage.py`**: Project chalane aur manage karne ki main utility.
+* **`myproject/` (inner)**: Project ki core settings, jaise:
+    * **`settings.py`**: Saari global configurations (database, installed apps, etc.).
+    * **`urls.py`**: Project level ke URLs, yahan se app URLs ko `include` karte hain.
+* **`myapp/`**: Individual application folder, specific functionality ke liye:
+    * **`models.py`**: Database table define karne wali **classes**.
+    * **`views.py`**: Webpage logic aur data handling ke **functions** (ya classes).
+    * **`urls.py`**: App ke apne specific URL patterns (recommended).
+
+
+## URLs Ki Linking
+
+1.  **App `urls.py`**: App ke andar ke URLs define karta hai.
+2.  **Project `urls.py`**: App ke `urls.py` ko ek base path par `include()` karta hai, jisse saare URLs link ho jaate hain.
+
+---
