@@ -10,6 +10,7 @@ pip install Django
 install others which need
 
 for 12c connect
+ Python 3.11.9 
 pip install Django==3.2.25 
 pip install cx_Oracle==8.3.0
 
