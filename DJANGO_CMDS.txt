@@ -2,20 +2,36 @@ myprojectenv\Scripts\activate
 cd myproject
 py manage.py runserver
 
-
+---------------------------------------------------------------------
 to create new venv
 python -m venv myenv
 myenv\Scripts\activate.bat
 pip install Django
 install others which need
-
-for 12c connect
-python-3.10.7-amd64.exe
-pip install Django==3.2.25 
-pip install cx_Oracle==8.3.0
+----------------------------------------------------------------------
 
 
+for 12c connect 
+step 1st Install Python 3.10.7 on your system
+step 2nd "C:\Path\To\Python310\python.exe" -m venv myenv_3.10
+step 3rd myenv_3.10\Scripts\activate
+step 4th pip install -r requirements.txt
 
+(requirement.txt)
+asgiref==3.8.1
+cx-Oracle==8.3.0
+Django==3.2.25
+djangorestframework==3.14.0
+pytz==2025.2
+sqlparse==0.5.3
+typing_extensions==4.14.0
+tzdata==2025.2
+
+
+
+
+
+----------------------------------------------------------------------------
 for git
 
 git add .
