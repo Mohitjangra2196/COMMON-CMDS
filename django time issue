@@ -1,0 +1,28 @@
+# In views.py or any other file where you need the time
+from django.utils import timezone
+from django.conf import settings # if using option 1 
+import pytz # You will need pytz to get the specific timezone object for conversion
+
+
+
+# Option 1: if in setting.py , TIME_ZONE = 'Asia/Kolkata' then
+                                                                  
+current_kolkata_time = timezone.now().astimezone(timezone.get_current_timezone())     
+
+# This will always give you time in whatever your project's TIME_ZONE is set to.
+
+
+# Option 2: (direct pass)
+current_kolkata_time = timezone.now().astimezone(pytz.timezone('Asia/Kolkata'))
+print(current_kolkata_time)
+
+
+--------------------------------------in setting.py-------------------------------------------------
+
+LANGUAGE_CODE = 'en-us'
+
+TIME_ZONE = 'Asia/Kolkata' # <--- CHANGE THIS LINE
+
+USE_I18N = True
+
+USE_TZ = True
