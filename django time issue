@@ -3,12 +3,12 @@ from django.utils import timezone
 from django.conf import settings # if using option 1 
 import pytz # You will need pytz to get the specific timezone object for conversion
 
-
-
+timezone.now().astimezone(timezone.get_current_timezone()).replace(microsecond=0).replace(tzinfo=None)
+2025-06-30 22:04:03
 # Option 1: if in setting.py , TIME_ZONE = 'Asia/Kolkata' then
                                                                   
 current_kolkata_time = timezone.now().astimezone(timezone.get_current_timezone())     
-
+2025-06-30 22:04:03.272829+05:30
 # This will always give you time in whatever your project's TIME_ZONE is set to.
 
 
