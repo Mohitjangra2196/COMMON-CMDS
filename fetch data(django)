@@ -1,0 +1,29 @@
+# In your app's views.py
+from django.http import JsonResponse
+from .models import Employee # Assuming you have an Employee model
+
+def get_employee_details(request):
+    paycode = request.GET.get('paycode')
+    if not paycode:
+        return JsonResponse({'error': 'Paycode is required'}, status=400)
+
+    try:
+        # Option 1: Fetch from Django Model
+        employee = Employee.objects.get(paycode=paycode)
+        data = {'name': employee.name, 'dept': employee.department}
+        return JsonResponse(data)
+    except Employee.DoesNotExist:
+        # Option 2: Fetch directly from Oracle via SQL (less common for Django apps)
+        # You'd need to use django.db.connection or a custom ORM for this
+        # Example using raw SQL (be careful with SQL injection for real apps!)
+        # from django.db import connection
+        # with connection.cursor() as cursor:
+        #     cursor.execute("SELECT name, department FROM employees WHERE paycode = %s", [paycode])
+        #     row = cursor.fetchone()
+        #     if row:
+        #         data = {'name': row[0], 'dept': row[1]}
+        #         return JsonResponse(data)
+
+        return JsonResponse({'name': 'Not Found', 'dept': 'Not Found'}, status=404)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
