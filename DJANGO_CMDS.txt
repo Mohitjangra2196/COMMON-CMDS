@@ -13,7 +13,7 @@ install others which need
 
 for 12c connect 
 step 1st Install Python 3.10.7 on your system
-step 2nd "C:\Path\To\Python310\python.exe" -m venv myenv_3.10
+step 2nd "E:\DjangoProjects\DCM_SECURITY_SCREEN\python310\python.exe" -m venv myenv_3.10
 step 3rd myenv_3.10\Scripts\activate
 step 4th pip install -r requirements.txt
 
