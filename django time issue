@@ -26,3 +26,157 @@ TIME_ZONE = 'Asia/Kolkata' # <--- CHANGE THIS LINE
 USE_I18N = True
 
 USE_TZ = True
+
+
+
+
+--------------------------------------------------------------------------new leaning 06july2025----------------------
+
+    # print (f"valid time :{VALID_TIME}")    #output =valid time :2025-07-05 12:52:19.085958+05:30
+    # print (VALID_TIME.date())              #output = 2025-07-05
+    # print (VALID_TIME.time())              #output = 12:52:19.085958
+    # print (type (VALID_TIME))              #output = <class 'datetime.datetime'>
+    # print (type (datetime.strptime('17:28:46 PM'[:-3], '%H:%M:%S').time()))              #output = <class 'datetime.time'>
+    # print (type (VALID_TIME.time()))              #output = <class 'datetime.time'>
+    
+
+
+
+
+
+    for I in data :
+        #for readable purpose by mj--------
+        #   str_time = I['REQUEST_TIME'][:-3]
+        #   converted_into_datetime   =     datetime.strptime(str_time, '%H:%M:%S').time()
+        #   combined_them = datetime.combine(I['GATEPASS_DATE'],converted_into_datetime)
+        #   req_time = DELHI_TIME.localize(combined_them)
+        #   str >  convert into date_time  >  combie date + time  > localize (because +5:30 yeh rah gya tha verna naive time hota(navie time incomplete time))
+
+
+-------------------------------------------------------for more understanding complete code-----------------------------------------------------
+# gatepass_app/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.db import connection # For raw SQL queries
+
+from .models import GatePass
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt 
+from django.contrib.auth import get_user_model
+from datetime import datetime, timedelta, time
+
+# Import the new form
+from .forms import ManualGatePassForm, ManualMarkOutForm # Import both forms
+
+
+# DRF Imports
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .serializers import GatePassSerializer
+
+# Import for timezone handling
+from pytz import timezone as pytz_timezone
+from django.utils import timezone
+from django.conf import settings
+
+# Define the Oracle server's actual timezone (IST)
+DELHI_TIME = pytz_timezone('Asia/Kolkata')
+
+User = get_user_model() # Get the currently active user model (which is now Django's default User)
+
+@login_required
+def home_screen(request):
+    # Filter out superusers from the list of security guards
+    # is_superuser=False will exclude any user marked as a superuser.
+    security_guards = User.objects.filter(is_superuser=False).order_by('username')
+    return render(request, 'gatepass_app/home_screen.html', {'security_guards': security_guards})
+
+@login_required
+def mark_out_screen(request):
+    employees_to_mark_out = []
+    data = GatePass.objects.filter(
+        FINAL_STATUS = 'A',
+        INOUT_STATUS = 'X').exclude(
+        EARLY_LATE = 'L', 
+    ).values(
+        'NAME','PAYCODE','EMP_TYPE','DEPARTMENT','UNIT_NAME','GATEPASS_DATE',
+        'GATEPASS_TYPE','LUNCH','GATEPASS_NO','FINAL_STATUS','SYS_DATE','REQUEST_TIME'
+    ).order_by ('-GATEPASS_DATE','-REQUEST_TIME')
+
+    VALID_TIME  = timezone.now().astimezone(DELHI_TIME)  - timedelta(hours=28)
+    # print (f"valid time :{VALID_TIME}")    #output =valid time :2025-07-05 12:52:19.085958+05:30
+    # print (VALID_TIME.date())              #output = 2025-07-05
+    # print (VALID_TIME.time())              #output = 12:52:19.085958
+    # print (type (VALID_TIME))              #output = <class 'datetime.datetime'>
+    # print (type (datetime.strptime('17:28:46 PM'[:-3], '%H:%M:%S').time()))              #output = <class 'datetime.time'>
+    # print (type (VALID_TIME.time()))              #output = <class 'datetime.time'>
+    
+
+
+
+
+
+    for I in data :
+        #for readable purpose by mj--------
+        #   str_time = I['REQUEST_TIME'][:-3]
+        #   converted_into_datetime   =     datetime.strptime(str_time, '%H:%M:%S').time()
+        #   combined_them = datetime.combine(I['GATEPASS_DATE'],converted_into_datetime)
+        #   req_time = DELHI_TIME.localize(combined_them)
+        #   str >  convert into date_time  >  combie date + time  > localize (because +5:30 yeh rah gya tha verna naive time hota(navie time incomplete time))
+
+        req_time = DELHI_TIME.localize(datetime.combine(I['GATEPASS_DATE'],datetime.strptime(I['REQUEST_TIME'][:-3], '%H:%M:%S').time()))
+        if req_time < VALID_TIME :
+            gatepass_date = I['GATEPASS_DATE'] 
+            Cross = 'Yes'
+        else :
+            gatepass_date = ""
+            Cross = 'NO'    
+
+
+
+
+
+
+# #-------------------------------------------------------------------------------------------------------------------------------------------------
+
+#         if I['GATEPASS_DATE'] < VALID_TIME.date() :
+            
+#             gatepass_date = I['GATEPASS_DATE'] 
+#             Cross = 'Yes'
+#             #print(f"gatepass_date <=valid_date {I['GATEPASS_NO']} req_time {datetime.strptime(I['REQUEST_TIME'][:-3], '%H:%M:%S').time()}  valid  :{ VALID_TIME.time()} name :{I['NAME']} gatepas_date{I['GATEPASS_DATE']} " )
+
+#         elif I['GATEPASS_DATE'] == VALID_TIME.date() : 
+#             if datetime.strptime(I['REQUEST_TIME'][:-3], '%H:%M:%S').time() < VALID_TIME.time()  :
+#                 gatepass_date = I['GATEPASS_DATE'] 
+#                 Cross = 'Yes'
+#              #   print(f"gatepass_date =valid_date req < val_time no {I['GATEPASS_NO']} req_time {datetime.strptime(I['REQUEST_TIME'][:-3], '%H:%M:%S').time()}  valid  :{ VALID_TIME.time()} name :{I['NAME']} gatepas_date{I['GATEPASS_DATE']} " )
+#             else:    
+#                 gatepass_date = ""
+#                 Cross = 'NO'       
+#               #  print(f"gatepass_date =valid_date req > val_time no {I['GATEPASS_NO']} req_time {datetime.strptime(I['REQUEST_TIME'][:-3], '%H:%M:%S').time()}  valid  :{ VALID_TIME.time()} name :{I['NAME']} gatepas_date{I['GATEPASS_DATE']} " )
+       
+#         else:
+#             gatepass_date = ""
+#             Cross = 'NO'       
+#             #print(f"gatepass_date >valid_date{I['GATEPASS_NO']} req_time {datetime.strptime(I['REQUEST_TIME'][:-3], '%H:%M:%S').time()}  valid  :{ VALID_TIME.time()} name :{I['NAME']} gatepas_date{I['GATEPASS_DATE']} " )
+#-------------------------------------------------------------------------------------------------------------------------------------------------   
+        dept_unit = f"{I['DEPARTMENT']}" if 'UNIT' in  I['DEPARTMENT'].upper() else f"{I['DEPARTMENT']} {I['UNIT_NAME']}"
+
+        status = 'Approved' if I['FINAL_STATUS'] == 'A' else 'ByPass'
+        lunch = ' + Lunch' if  I['LUNCH'] == 'A' else ' '
+        processed_employee_data = {
+            'NAME_DISPLAY' : f"{I['NAME']} - {I['PAYCODE']} - {I['EMP_TYPE']}",
+            'DEPARTMENT_DISPLAY' :f"{dept_unit} {gatepass_date}",
+            'STATUS_TYPE' : f" {status} - {I['GATEPASS_TYPE']} {lunch}",
+            'GATEPASS_NO' : I['GATEPASS_NO'],
+            'EMP_TYPE' : I['EMP_TYPE'],
+            'GATEPASS_DATE' : I['GATEPASS_DATE'],
+            'IS_CROSS_DATE' : Cross,
+        }
+
+        employees_to_mark_out.append(processed_employee_data)
+
+    return render(request, 'gatepass_app/mark_out_screen.html', {'employees': employees_to_mark_out})
