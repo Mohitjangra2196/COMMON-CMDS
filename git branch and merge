@@ -1,36 +1,34 @@
 Summary of the Workflow:
-Test PC:
+
+----------------------------------------------------Test PC:-------------------------------------------------
+
 git clone (first time)
 git checkout -b develop
-Make changes
+---------------Make changes------------
 git add .
-
 git commit -m "..."
-
+				if need then this 
+					git remote add origin https://github.com/Mohitjangra2196/DCM_SECURITY_SCREEN.git
+				end if;
 git push -u origin develop (repeat these steps for all test changes)
 
-Once tested and verified:
 
+-------Once tested and verified:-----------------
+				if need then this 
+					git fetch origin
+				end if;
+										
 git checkout main
-
 git pull origin main
-
 git merge develop
-
-(Resolve conflicts if any)
-
+----(Resolve conflicts if any)-------
 git push origin main
 
-Main Running Server:
-
+---------------------------------------------------Main Running Server:-----------------------------------
 git clone (first time)
-
 git checkout main
-
 When new stable code is available:
-
 git pull origin main
-
 
 
 
