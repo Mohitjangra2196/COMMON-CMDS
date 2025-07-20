@@ -1,3 +1,5 @@
+Browser 👉 HttpRequest 👉 URL Dispatcher 👉 View Function 👉 Response 👉 Browser
+
 myprojectenv\Scripts\activate
 cd myproject
 py manage.py runserver
